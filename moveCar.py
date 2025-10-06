@@ -30,15 +30,31 @@ except serial.SerialException as e:
 
 time.sleep(2)  # Give MCU time to reset if needed (esp. if using USB-serial)
 
-# === Example: Send command ===
-couts = ["LEFT ISH", "RIGHT ISH", "STOP"]
+if __name__ == "__main__":
+    # === Example: Send commands ===
+    couts = ["TRACKING", "FOLLOW", "FORWARD", "RIGHT ISH", "BACKWARD"]
 
-for cout in couts:
-    command = f"${COMMANDS[cout]}!"  # or whatever command your MCU expects
-    ser.write(command.encode())   # Send string as bytes
-    print(f"Sent: {cout.strip()}")
+    for cout in couts:
+        command = f"${COMMANDS[cout]}!"  # or whatever command your MCU expects
+        ser.write(command.encode())   # Send string as bytes
+        print(f"Sent: {cout.strip()}")
+        time.sleep(2)   # Let command run for a while for observation
 
-    # === Example: Read reply (if MCU sends one) ===
+        # === Example: Read reply (if MCU sends one) ===
+        try:
+            response = ser.readline().decode().strip()
+            if response:
+                print(f"Received: {response}")
+            else:
+                print("No response received.")
+        except Exception as e:
+            print(f"Read error: {e}")
+
+
+    # === Stop all commands ===
+    command = f"${COMMANDS['STOP']}!"
+    ser.write(command.encode())
+    print(f"Sent: STOP")
     try:
         response = ser.readline().decode().strip()
         if response:
@@ -48,7 +64,7 @@ for cout in couts:
     except Exception as e:
         print(f"Read error: {e}")
 
-# === Clean up ===
-ser.close()
-print("Serial port closed.")
+    # === Clean up ===
+    ser.close()
+    print("Serial port closed.")
 
