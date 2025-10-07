@@ -3,13 +3,17 @@ import serial
 import time
 
 class MoveArm:
+    """
+    This class defines methods to move the arm portion of the carbot
+    """
     def __init__(self):
+
         SERIAL_PORT = "/dev/ttyUSB0"
         BAUD_RATE = 115200
         TIMEOUT = 1
         ## Initialise serial port
         try:
-            ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=TIMEOUT)
+            self.ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=TIMEOUT)
             print(f"Connected to {SERIAL_PORT} at {BAUD_RATE} baud.")
 
         except serial.SerialException as e:
