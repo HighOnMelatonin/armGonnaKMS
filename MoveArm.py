@@ -27,21 +27,13 @@ class MoveArm:
         ## Give time in milliseconds
         self.movetime = time
 
-    def reset(self) -> None:
-        reset = 1500
-        ## Double braces sends the entire command, removing it only sends servo 0
-        resetting = "{{#000P{0:0>4d}T{1:0>4d}!#001P{0:0>4d}T{1:0>4d}!#002P{0:0>4d}T{1:0>4d}!#003P{0:0>4d}T{1:0>4d}!#004P{0:0>4d}T{1:0>4d}!#005P{0:0>4d}T{1:0>4d}!}}".format(reset, self.movetime)
-        self.ser.write(resetting.encode())
-
-        ## Pause to allow for movement completion
-        time.sleep((self.movetime*2)/1000)
-
     def pause(self) -> None:
         time.sleep((self.movetime)/1000)
 
     def move(self, servo0 = 1500, servo1 = 1500, servo2 = 1500, servo3 = 1500, servo4 = 1500, servo5 = 1500) -> None:
         '''
-        This method accounts for movement time between commands
+        This method accounts for movement time between commands, default values are 1500 PWM
+        Calling this method with no values provided will reset the robot to the default position
 
         Servo 0 (waist):
         Lower limit: 0
@@ -59,7 +51,7 @@ class MoveArm:
         '''
         print("Moving arm")
         print(f"Servo 0: {servo0}\nServo 1: {servo1}\nServo 2: {servo2}\nServo 3: {servo3}\nServo 4: {servo4}\nServo 5: {servo5}")
-        command = "{{#000P{0:0>4d}T{6:0>4d}!#001P{1:0>4d}T{6:0>4d}!#002P{2:0>4d}T{6:0>4d}!#003P{3:0>4d}T{6:0>4d}!#004P{4:0>4d}T{6:0>4d}!#005P{5:0>4d}T{6:0>4d}!}}".format(servo0, servo1, servo2, servo3, servo4, servo5, self.movetime)
+        command = f"{{#000P{servo0:0>4d}T{self.movetime:0>4d}!#001P{servo1:0>4d}T{self.movetime:0>4d}!#002P{servo2:0>4d}T{self.movetime:0>4d}!#003P{servo3:0>4d}T{self.movetime:0>4d}!#004P{servo4:0>4d}T{self.movetime:0>4d}!#005P{servo5:0>4d}T{self.movetime:0>4d}!}}"
         self.ser.write(command.encode())
 
         ## Pause to allow for movement completion
